@@ -1,16 +1,21 @@
-const Card = (props) => {
+import Styles from "../Styles/card.module.css";
+const Card = ({ props }) => {
+  console.log(props);
+  function handleClick() {
+    window.open(props.url);
+    // console.log("got ot nwew page", props.url);
+  }
   return (
-    <div>
-      <div>
-        <img src={/* props.image */} alt={/* props.title */} />
+    <div className={Styles.card}>
+      <div className={Styles.badge}>
+        <img className={Styles.img} src={props.image} alt={props.title} />
       </div>
       <div>
-        <a href="props.url">
-          <h2>{/* props.title */}</h2>
-        </a>
-        <a href={/* props.url */}>
-          <button>See More...</button>
-        </a>
+        <h2>{props.label}</h2>
+
+        <button onClick={handleClick} className={Styles.btn}>
+          See More...
+        </button>
       </div>
     </div>
   );

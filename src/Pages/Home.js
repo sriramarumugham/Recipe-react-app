@@ -1,62 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import customFetch from "../Utils/api";
-
+import Card from "../Components/Card";
+import Styles from "../Styles/home.module.css";
 const Home = () => {
-  const [input, setInput] = useState("");
+  const [userText, setUserText] = useState("");
+
   const [recipes, setRecipes] = useState([]);
 
-  useEffect(() => {
-    window.addEventListener("keydown", (event) => {
-      if (event.keyCode == 13 && input.legth !== 0) {
-        // console.log("call", input);
-        // const value = input;
-        fetchData();
-
-        // here is the probelm in use effect
-      }
-    });
-  });
-  //here is the problem
-  const fetchData = async () => {
-    const value = input;
-    console.log("input", value);
-    const request = await customFetch(value);
-    const response = await request;
-    console.log(response);
+  const handleUserKeyPress = (event) => {
+    const { key, keyCode } = event;
+    console.log("pressed");
+    if (keyCode === 13) {
+      fetchRequest(userText);
+    }
   };
 
-  // const fetchRequest = async (input) => {
-  //   const request = await customFetch(input);
-  //   const response = await request;
-  //   if (response.success) {
-  //     const objects = response.data.map((obj) => {
-  //       const { recipe } = obj;
-  //       return recipe;
-  //     });
-  //     // console.log(objects);
-  //     setRecipes(objects);
-  //     // console.log(recipes);
-  //   }
-  // };
+  useEffect(() => {
+    window.addEventListener("keydown", handleUserKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleUserKeyPress);
+    };
+  });
+
+  const fetchRequest = async (input) => {
+    console.log("called", input);
+    const request = await customFetch(input);
+    const response = await request;
+    if (response.success) {
+      const objects = response.data.map((obj) => {
+        const { recipe } = obj;
+        return recipe;
+      });
+      console.log(objects);
+      setRecipes(objects);
+    }
+  };
+
   return (
     <div>
       <h1>Recipe Search</h1>
       <input
+        className={Styles.search}
         type="search"
         placeholder="Search a recipe"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        value={userText}
+        onChange={(e) => setUserText(e.target.value)}
       />
-      {/* <button
-        onClick={() => {
-          fetchRequest(input);
-        }}
-      >
-        search
-      </button> */}
-      <div>{/* <Card /> */}</div>
+
+      <div className={Styles.list}>
+        {recipes.map((recipe, index) => {
+          return <Card props={recipe} key={`index${index}`} />;
+        })}
+      </div>
     </div>
   );
 };
 
 export default Home;
+
+// const newHome = () => {
+
+// };
